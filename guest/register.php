@@ -4,7 +4,7 @@
 <?php
 session_start();
 
-if(isset($_SESSION['user'])) {
+if(isset($_SESSION['guest_id'])) {
     header('location: home.php');
 }
 
@@ -56,7 +56,7 @@ if(isset($_SESSION['user'])) {
                         <p class="bg-dark text-danger text-center"><?= $error ?> </p>
                     <?php endforeach; ?>
             <?php else:
-                echo $user->register($name, $email, $mobile, $password) ? header('location: home.html.php') : '<script>alert("TT")</script>';
+                echo $user->register($name, $email, $mobile, $password) ? header('location: home.php') : '<script>alert("TT")</script>';
 
             endif; // $if not empty $errors
         endif; // isset $_POST

@@ -1,28 +1,24 @@
 <?php
 
 session_start();
-include_once __DIR__.'/../../classes/Guest.php';
+
+//if session is not set, re-direct user to index/login page
+//if(!isset($_SESSION['guest_id'])) header("location: index.php");
+include_once '../classes/Guest.php';
 $guest = new Guest();
 
-    $id = $name = $email = $mobile = $id_card = $city = $state_id = $pin_code = $address = "";
+$guest_id = $name = "";
 
-    if (isset($_SESSION['user'])) {
+$id = $name = $email = $mobile = $id_card = $city = $state_id = $pin_code = $address = "";
+
+if (isset($_SESSION['guest_id'])) {
 
 
-        $id = $_SESSION['user']; //session id
+    $guest_id = $_SESSION['guest_id']; //session id
 
-        //Fetch data from database and assign to the variables
-        $row = $guest->fetchData($id); //Fetching data
-        $id = $row['guest_id'];
-        $name = $row['name'];
-        $mobile = $row['mobile'];
-        $email = $row['email'];
-        $id_card = $row['id_card'];
-        $city = $row['city'];
-        $state_id = $row['state_id'];
-        $pin_code = $row['pin_code'];
-        $address = $row['address'];
-    }
+    // //Fetch data from database and assign to the variables
+    $name = $guest->getName($guest_id); //Fetching data
+}
 
 ?>
 
@@ -43,7 +39,8 @@ $guest = new Guest();
     <link rel="stylesheet" href="../assets/fontawesome-free-5.8.1-web/css/all.min.css">
     <!--Personal Style sheet -->
     <link rel="stylesheet" type="text/css" media="screen" href="../assets/css/custom/style.css" />
+
+
+
+
 </head>
-
-
-<body>

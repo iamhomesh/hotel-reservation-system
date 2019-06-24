@@ -1,11 +1,6 @@
-<?php
+<?php 
 
-session_start();
+include_once __DIR__. '/head.php';
+include_once __DIR__. '/navbar.php';
 
-
-if(isset($_SESSION['user'])) {
-    include_once __DIR__ . '/head.php';
-    include_once __DIR__ . '/navbar.php';
-} else {
-
-}
+?>

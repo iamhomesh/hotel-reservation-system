@@ -1,7 +1,7 @@
 <?php 
 
 session_start();
-if(isset($_SESSION['user'])) {
+if(isset($_SESSION['guest_id'])) {
     header('location: home.php');
 }
 
@@ -55,7 +55,7 @@ if(isset($_SESSION['user'])) {
                 <?php else :
                 $user = new Guest();
                 $logged = $user->login($username, $password);
-                $_SESSION['user'] = $logged[0];
+                $_SESSION['guest_id'] = $logged[0];
                 echo $logged ? header("location:home.php") : "<script>alert('Username and password did not match.')</script>";
 
             endif; // $if not empty $errors

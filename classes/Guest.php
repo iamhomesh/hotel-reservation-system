@@ -106,11 +106,14 @@ class Guest
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    private function query($sql, $parameters = [])
+    public function getName($guest_id)
     {
-        $query = $this->pdo->prepare($sql);
-        $query->execute($parameters);
-        return $query;
+        $query = "SELECT `name` FROM `guest` WHERE `guest_id` = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindValue(1, $guest_id);
+        $stmt->execute();
+        $name = $stmt->fetch(PDO::FETCH_NUM);
+        return $name[0];
     }
 
 
@@ -154,3 +157,4 @@ class Guest
 // $guest = new Guest();
 
 // $guest->update(3, $fields);
+
