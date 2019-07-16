@@ -29,7 +29,6 @@ class Guest
     {
         $query = "SELECT `guest_id`, `email`, `password` FROM `guest` WHERE `email` = ? AND `password` = ?";
         $stmt = $this->conn->prepare($query);
-
         $stmt->bindValue(1, $username);
         $stmt->bindValue(2, $password);
         $stmt->execute();
@@ -112,8 +111,15 @@ class Guest
         $stmt = $this->conn->prepare($query);
         $stmt->bindValue(1, $guest_id);
         $stmt->execute();
-        $name = $stmt->fetch(PDO::FETCH_NUM);
-        return $name[0];
+        return $stmt->fetchColumn();
+    }
+    public function getEmail($guest_id)
+    {
+        $query = "SELECT `email` FROM `guest` WHERE `guest_id` = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindValue(1, $guest_id);
+        $stmt->execute();
+        return $stmt->fetchColumn();
     }
 
 
@@ -154,7 +160,8 @@ class Guest
 //  echo "<pre>";
 //  print_r($fields);
 
-// $guest = new Guest();
+//$guest = new Guest();
 
-// $guest->update(3, $fields);
+//$guest->update(3, $fields);
+//echo $guest->getEmail(2);
 

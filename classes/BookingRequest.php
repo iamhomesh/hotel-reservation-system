@@ -24,9 +24,8 @@ class BookingRequest {
         foreach ($fields as $key => $value) {
             $query .= "`$key` = :$key,";
         }
-
-        //$query = rtrim($query, ',');
-        $query .= " `status` = 'Pending'";
+        $query = rtrim($query, ',');
+        $query .= ", `status` = 'Pending'";
         $stmt = $this->conn->prepare($query);
 
         if($stmt->execute($fields)) return true;
@@ -41,7 +40,7 @@ class BookingRequest {
     public function fixDate($date)
     {
         $date = new DateTime($date);
-        return $date->format('d-m-Y');
+        return $date->format('d-M-Y');
     }
 
     public function getAllByGuestId($guest_id)
@@ -53,7 +52,7 @@ class BookingRequest {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     public function countPending($guest_id) {
-        $query = "SELECT COUNT(`request_id`) FROM `booking_requests` WHERE `guest_id` = ? AND `status` = 'pending'";
+        $query = "SELECT COUNT(`id`) FROM `booking_requests` WHERE `guest_id` = ? AND `status` = 'pending'";
         $stmt = $this->conn->prepare($query);
         $stmt->bindValue(1, $guest_id);
 
@@ -62,7 +61,7 @@ class BookingRequest {
         
     }
     public function countCancelled($guest_id) {
-        $query = "SELECT COUNT(`request_id`) FROM `booking_requests` WHERE `guest_id` = ? AND `status` = 'cancelled'";
+        $query = "SELECT COUNT(`id`) FROM `booking_requests` WHERE `guest_id` = ? AND `status` = 'cancelled'";
         $stmt = $this->conn->prepare($query);
         $stmt->bindValue(1, $guest_id);
 
@@ -71,7 +70,7 @@ class BookingRequest {
         
     }
     public function countConfirmed($guest_id) {
-        $query = "SELECT COUNT(`request_id`) FROM `booking_requests` WHERE `guest_id` = ? AND `status` = 'confirmed'";
+        $query = "SELECT COUNT(`id`) FROM `booking_requests` WHERE `guest_id` = ? AND `status` = 'confirmed'";
         $stmt = $this->conn->prepare($query);
         $stmt->bindValue(1, $guest_id);
 
@@ -81,7 +80,7 @@ class BookingRequest {
     }
 }
 
-//$test = new BookingRequest();
+$test = new BookingRequest();
 
 // // $st = $test->getAllByGuestId(0);
 
@@ -91,6 +90,15 @@ class BookingRequest {
 // //     print_r($value);
 // // }
 
-// // $test->create($fields);
+// $fields = array(
+//     'guest_id' => 1,
+//     'adults' => 2,
+//     'children' => 1,
+//     'room_type_id' => 3,
+//     'check_in' => "15-07-2019",
+//     'check_out' => "17-07-2019"
+// );
+
+// $test->create($fields);
 
 // echo $test->countCancelled(1);

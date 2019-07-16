@@ -1,10 +1,11 @@
 <?php 
 
-session_start();
-if(isset($_SESSION['guest_id'])) {
-    header('location: home.php');
-}
+// session_start();
+// if(isset($_SESSION['guest_id'])) {
+//     header('location: home.php');
+// }
 
+include_once __DIR__ . '/session.php';
 
 ?>
 

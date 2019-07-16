@@ -1,16 +1,13 @@
 <?php
-
-session_start();
-
+session_start(); 
 //if session is not set, re-direct user to index/login page
-//if(!isset($_SESSION['guest_id'])) header("location: index.php");
-include_once '../classes/Guest.php';
-$guest = new Guest();
+//if(!isset($_SESSION['guest_id'])) header("location: ./");
+
+
 
 $guest_id = $name = "";
-
 $id = $name = $email = $mobile = $id_card = $city = $state_id = $pin_code = $address = "";
-
+$name = $guest->getName($guest_id);
 if (isset($_SESSION['guest_id'])) {
 
 
@@ -26,7 +23,6 @@ if (isset($_SESSION['guest_id'])) {
 
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Hotel Resevation System</title>
@@ -39,8 +35,5 @@ if (isset($_SESSION['guest_id'])) {
     <link rel="stylesheet" href="../assets/fontawesome-free-5.8.1-web/css/all.min.css">
     <!--Personal Style sheet -->
     <link rel="stylesheet" type="text/css" media="screen" href="../assets/css/custom/style.css" />
-
-
-
-
+    <script src="../assets/js/jquery-3.3.1.min.js"></script>
 </head>

@@ -1,14 +1,15 @@
-<?php include_once __DIR__ . '../includes/header.php'; 
-
-include_once __DIR__. '../../classes/BookingRequest.php';
+<?php include_once __DIR__ . '../includes/header.php';
+include_once __DIR__ . '../../classes/BookingRequest.php';
 $request = new BookingRequest();
 include_once __DIR__ . '../../classes/Room.php';
-        $rooms = new Room();
-        include_once __DIR__ . '../../classes/RoomType.php';
-        $roomType = new RoomType();
-        $arrRoomTypes = $roomType->fetchAll();
-        $room = new Room();
-        ?>
+$rooms = new Room();
+include_once __DIR__ . '../../classes/RoomType.php';
+$roomType = new RoomType();
+$arrRoomTypes = $roomType->fetchAll();
+
+include_once __DIR__ . '../../classes/BookingHistory.php';
+$bookingHistory = new BookingHistory();
+?>
 
 
 <div class="container-fluid overflow-auto mb-3">
@@ -18,7 +19,7 @@ include_once __DIR__ . '../../classes/Room.php';
                 <div class="card-header text-center bg-white">
                     <span class="d-block font-weight-bold text-uppercase">Request/Booking Status</span>
                 </div>
-                <div class="card-body" >
+                <div class="card-body">
                     <div class="row text-center">
                         <dl class="col-4">
                             <i class="fas fa-meh-rolling-eyes" style="font-size: 30px"></i>
@@ -40,37 +41,44 @@ include_once __DIR__ . '../../classes/Room.php';
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-12 col-sm-12 col-lg-6">
             <div class="card">
+
                 <div class="card-header text-center bg-white">
                     <span class="d-block font-weight-bold text-uppercase">Times/Days You Stayed</span>
                 </div>
                 <div class="card-body overflow-auto">
                     <div class="row text-center">
-                        <?php foreach($arrRoomTypes as $arrRoomType): ?>
-                        <dl class="col-sm-12 col-md-6 col-lg-3">
-                            
-                            <dt><span class="badge badge-dark"><?= $arrRoomType['type_name'] ?></span></dt>
-                            <dd>
-                                <span class="badge badge-secondary">2</span> times - <span class="badge badge-secondary">20</span> day(s)
-                            </dd>
-                        </dl>
-                        <?php endforeach ?>
-                       
+                        <?php $rows = $bookingHistory->countStayed($guest_id);
+                        if ($rows) :
+                            foreach ($rows as $row) : ?>
+                                <dl class="col-sm-12 col-md-6 col-lg-3">
 
+                                    <dt><span class="badge badge-dark"><?= $row['type_name'] ?></span></dt>
+                                    <dd>
+                                        <span class="badge badge-secondary"><?= $row['id'] ?></span> times / <span class="badge badge-secondary">20</span> days
+                                    </dd>
+                                </dl>
+                            <?php endforeach;
+                        else :
+                            ?>
+                            <div class="m-auto">
+                                <span class="font-italic">Your bookings will be shown here</span>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
-        
-        
+
+
     </div>
 
 
     <div class="row mt-3 mb-5">
         <?php
-        
+
 
 
         foreach ($arrRoomTypes as $arrRoomType) : ?>
@@ -95,7 +103,7 @@ include_once __DIR__ . '../../classes/Room.php';
                             </div>
                             <div class="d-inline float-right">
                                 <?php
-                                $available = $room->countAvaiable($arrRoomType['type_id']);
+                                $available = $rooms->countAvaiable($arrRoomType['type_id']);
 
                                 if ($available > 0) : ?>
                                     <span class="badge badge-success"> Avl: <strong><?= $available ?></strong> </span>
@@ -129,7 +137,7 @@ include_once __DIR__ . '../../classes/Room.php';
 
     <!-- Widgets  -->
 
-    
+
 
 
 

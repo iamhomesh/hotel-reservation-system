@@ -16,10 +16,10 @@ if (!empty($row)) : ?>
                 <p class="text-right font-weight-bold">Price</p>
             </div>
         </div>
-        <div class="row overflow-auto" style="max-height:150px">
+        <div class="row overflow-auto" style="max-height:140px">
             <div class="col-8">
 
-                <div class="overflow-auto" style="max-height:150px">
+                <div class="overflow-auto" style="max-height:80px">
                     <p class="text-dark"><?= $row[0] ?></p>
                 </div>
             </div>

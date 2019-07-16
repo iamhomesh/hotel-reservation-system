@@ -1,16 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<?php
-session_start();
+<?php include_once __DIR__ . '/session.php'; ?>
 
-if(isset($_SESSION['guest_id'])) {
-    header('location: home.php');
-}
-
-?>
 <head>
-<meta charset="utf-8" />
+    <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Hotel Resevation System</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,16 +19,10 @@ if(isset($_SESSION['guest_id'])) {
 </head>
 
 <body class="" style="background-color: cyan">
-
-
     <div class="container">
-
-
         <div id="lgn-content">
             <?php
             include_once __DIR__ . '../../classes/Guest.php';
-
-
             $errors = array();
             $name = $email = $mobile = $password = "";
             if (isset($_POST['submit'])) :
@@ -55,29 +43,32 @@ if(isset($_SESSION['guest_id'])) {
                     <?php foreach ($errors as $error) : ?>
                         <p class="bg-dark text-danger text-center"><?= $error ?> </p>
                     <?php endforeach; ?>
-            <?php else:
-                echo $user->register($name, $email, $mobile, $password) ? header('location: home.php') : '<script>alert("TT")</script>';
+                <?php else :
+                    $user->register($name, $email, $mobile, $password);
+                    if ($user) : ?>
+                        <script>
+                            alert('Registered successfully')
+                        </script>
+                        <?php
+                        header('location: index.php');
+                    endif;
 
-            endif; // $if not empty $errors
-        endif; // isset $_POST
+                endif; // $if not empty $errors
+            endif; // isset $_POST
 
-        ?>
+            ?>
 
 
             <div class="card" style="background-color: rgba(245, 245, 235, .5); width:300px">
-
                 <div class="card-header text-center"><strong>Register</strong>
-
                 </div>
                 <div class="card-body card-block">
-
                     <form method="POST" action="">
                         <div class="form-row">
                             <div class="col-lg-12">
                                 <div class="form-group">
                                     <label for="name">Name</label>
                                     <input type="text" class="form-control" value="<?= $name ?? "" ?>" name="name" placeholder="Full Name" />
-
                                 </div>
                             </div>
                             <div class="col-lg-6">

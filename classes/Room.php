@@ -16,7 +16,7 @@ class Room {
     }
 
     
-    public function setConnection(Type $var = null)
+    public function setConnection()
     {
         $db = new Database();
         $this->conn = $db->getConnection();
