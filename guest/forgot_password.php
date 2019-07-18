@@ -1,7 +1,7 @@
-<?php 
+<?php
 
 session_start();
-if(isset($_SESSION['guest_id'])) {
+if (isset($_SESSION['guest_id'])) {
     header('location: home.php');
 }
 
@@ -24,6 +24,8 @@ if(isset($_SESSION['guest_id'])) {
     <!--Personal Style sheet -->
     <link rel="stylesheet" type="text/css" media="screen" href="../assets/css/custom/style.css" />
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+    <script src="../assets/js/jquery-3.3.1.min.js"></script>
 </head>
 
 
@@ -44,28 +46,59 @@ if(isset($_SESSION['guest_id'])) {
             $username = $password = "";
             if (isset($_POST['submit'])) :
                 $username = $_POST['username'];
-                $password = $_POST['password'];
-                if (empty($username)) $errors[] = "You did not enter the username";
-                if (empty($password)) $errors[] = "You did not enter the password";
+                if (empty($username)) $errors[] = "Please enter username(email)";
                 if (!empty($errors)) : ?>
                     <?php foreach ($errors as $error) : ?>
                         <p class="bg-dark text-danger text-center"><?= $error ?> </p>
                     <?php endforeach; ?>
                 <?php else :
-                $guest = new Guest();
-                $logged = $guest->login($username, $password);
-                $_SESSION['guest_id'] = $logged;
-                echo $logged ? header("location:home.php") : "<script>alert('Username and password did not match.')</script>";
+                    $guest = new Guest();
+                    $email = $guest->checkEmail($username);
+                    if (!$email) :
+                        $errors[] = "You are not registered with us.";
+                        foreach ($errors as $error) : ?>
+                            <p class="bg-dark text-danger text-center"><?= $error ?> </p>
+                        <?php endforeach;
+                    else :
+                        $success = $guest->passwordReset($username);
+                        if ($success) : ?>
+                            <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center">
+                                <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="2000">
+                                    <div class="toast-header">
+                                        <i class="fas fa-check text-success"></i>&nbsp;
+                                        <strong class="mr-auto text-success">Success</strong>
+                                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="toast-body">
+                                        Password reset request has been sent successfully you'll be notified soon.
+                                    </div>
+                                </div>
+                            </div>
+                            <script>
+                                $().ready(function() {
+                                    $('.toast').toast('show');
+                                })
+                            </script>
 
-            endif; // $if not empty $errors
-        endif; // isset $_POST
+                        <?php else :
+                        endif;
+                    endif;
 
-        ?>
+                //$logged = $guest->login($username, $password);
+                //$_SESSION['guest_id'] = $logged;
+                //echo $logged ? header("location:home.php") : "<script>alert('Username and password did not match.')</script>";
+
+                endif; // $if not empty $errors
+            endif; // isset $_POST
+
+            ?>
 
 
             <div class="card" style="background-color: rgba(245, 245, 235, .5); width:300px">
 
-                <div class="card-header text-center"><strong>Guest</strong>
+                <div class="card-header text-center"><strong>Forgot Password</strong>
 
                 </div>
                 <div class="card-body card-block">
@@ -74,35 +107,25 @@ if(isset($_SESSION['guest_id'])) {
                             <div class="form-row">
                                 <div id="lgn-div-username" class="input-group">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        <span class="input-group-text"><i class="fas fa-user text-dark"></i></span>
                                     </div>
                                     <input type="text" name="username" value="<?= $username ?? "" ?>" class="form-control" placeholder="username" />
                                 </div>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <div class="form-row">
-                                <div id="lgn-div-password" class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="fas fa-key"></i></span>
-                                    </div>
-                                    <input type="password" name="password" value="<?= $password ?? "" ?>" class="form-control" placeholder="password" />
-                                </div>
-                            </div>
+                        <div class="text-right">
+                            <button type="submit" name="submit" class="btn btn-elegant btn-sm">Submit</button>
                         </div>
 
-                        <div class="btn-group">
-                            <a href="forgot_password.php" class="nav-link text-danger">Forgot password?</a>
-                            <div class="">
-                                <button type="submit" name="submit" class="btn btn-pink btn-sm"><i class="fas fa-sign-in-alt"></i> Login</button>
-                            </div>
-                        </div>
                     </form>
                 </div>
                 <div class="card-footer text-center">
-                    <span>Don't have an account? <a class="rounded font-weight-bold badge badge-warning" href="register.php">
-                            <span class="text-dark text-uppercase">Register</span> </a> </span>
+                    <a class="rounded font-weight-bold badge badge-warning" href="index.php">
+                        <span class="text-dark text-uppercase">Login</span>
+                    </a>
+
+                    <a class="rounded font-weight-bold badge badge-warning" href="register.php">
+                        <span class="text-dark text-uppercase">Register</a>
 
                 </div>
 

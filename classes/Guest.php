@@ -60,20 +60,20 @@ class Guest
 
     public function checkEmail($email)
     {
-        $query = "SELECT `guest_id` FROM `guest` WHERE `email` = :email";
+        $query = "SELECT `email` FROM `guest` WHERE `email` = :email";
         $stmt = $this->conn->prepare($query);
         $stmt->bindValue(":email", $email);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetchColumn();
     }
 
     public function checkMobile($mobile)
     {
-        $query = "SELECT `guest_id` FROM `guest` WHERE `mobile` = :mobile";
+        $query = "SELECT `mobile` FROM `guest` WHERE `mobile` = :mobile";
         $stmt = $this->conn->prepare($query);
         $stmt->bindValue(":mobile", $mobile);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetchColumn(PDO::FETCH_ASSOC);
     }
 
     public function changePassword($id, $curr, $new)
@@ -143,7 +143,17 @@ class Guest
             return false;
         }
     }
+    public function passwordReset(string $email)
+    {
+        $query = "INSERT INTO `guest_password_request`(`username`, `status`) VALUES (?,'Unread')";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindValue(1, $email);
+        if($stmt->execute()) return true;
+        else return false;
+    }
 }
+
+
 
 //$fields = array('name' => 'Tested', 'mobile' => '000999000', 'email' => 'test@test.com', 'password' => 'test');
 // $fields = array(
@@ -161,7 +171,6 @@ class Guest
 //  print_r($fields);
 
 //$guest = new Guest();
-
+//echo $guest->passwordReset("iamhomesh@gmail.com");
 //$guest->update(3, $fields);
 //echo $guest->getEmail(2);
-
