@@ -1,11 +1,5 @@
 <?php
 include_once __DIR__ . '../includes/header.php';
-include_once __DIR__ . '/../classes/BookingRequest.php';
-include_once __DIR__ . '/../classes/BookingHistory.php';
-include_once __DIR__ . '/../classes/GuestSupport.php';
-$bookingRequest = new BookingRequest();
-$bookingHistory = new BookingHistory();
-$guestSupport = new GuestSupport();
 $support_type = $screenshot = $message = "";
 $errors = array();
 $support_view = array();
@@ -27,6 +21,7 @@ if (isset($_POST['submit'])) {
     if (empty($support_type)) $errors[] = "Please select support type.";
     if (empty($message)) $errors[] = "Please type message.";
     if (strlen($message) < 15 || strlen($message) > 300) $errors[] = "Message must have between 15 and 300 characters";
+
     if (empty($errors)) {
         if (!$_FILES['screenshot']['name']) {
             $fields = array(
@@ -38,13 +33,29 @@ if (isset($_POST['submit'])) {
             $insert = $guestSupport->insert($fields);
             $support_type = $screenshot = $message = "";
             if ($insert) : ?>
+                <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center">
+                    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="1000" style="width:500px">
+                        <div class="toast-header">
+                            <i class="fas fa-check text-success"></i>&nbsp;
+                            <strong class="mr-auto text-success">Success</strong>
+                            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="toast-body">
+                            Data inserted successfully.
+                        </div>
+                    </div>
+                </div>
                 <script>
-                    alert("Feedback sent successfully");
                     $().ready(function() {
-                            $(".card-header li .active").removeClass('bg-dark text-light active');
-                            $('#history-tab').addClass('bg-dark text-light active');
-                            $('#nav-history').addClass('show active').siblings().removeClass('show active');
-                        });
+                        $('.toast').toast('show');
+                    })
+                    $().ready(function() {
+                        $(".card-header li .active").removeClass('bg-dark text-light active');
+                        $('#history-tab').addClass('bg-dark text-light active');
+                        $('#nav-history').addClass('show active').siblings().removeClass('show active');
+                    });
                 </script>
             <?php endif;
         } else {
@@ -55,7 +66,6 @@ if (isset($_POST['submit'])) {
                     alert("Only image file allowed");
                 </script>
             <?php else :
-
                 $screenshot = __DIR__ . "/support_screenshots/" . $guest->getEmail($guest_id) . '_' . date("Ymd-His") . ".$extension";
                 echo $screenshot;
                 move_uploaded_file($temp_name, $screenshot);
@@ -68,8 +78,24 @@ if (isset($_POST['submit'])) {
                 $insert = $guestSupport->insert($fields);
                 $support_type = $screenshot = $message = "";
                 if ($insert) : ?>
+                    <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center">
+                        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="1000" style="width:500px">
+                            <div class="toast-header">
+                                <i class="fas fa-check text-success"></i>&nbsp;
+                                <strong class="mr-auto text-success">Success</strong>
+                                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="toast-body">
+                                Data inserted successfully.
+                            </div>
+                        </div>
+                    </div>
                     <script>
-                        alert("Feedback sent successfully");
+                        $().ready(function() {
+                            $('.toast').toast('show');
+                        })
                         $().ready(function() {
                             $(".card-header li .active").removeClass('bg-dark text-light active');
                             $('#history-tab').addClass('bg-dark text-light active');
@@ -79,14 +105,37 @@ if (isset($_POST['submit'])) {
                 <?php endif;
             endif;
         }
-    } else {
-        foreach ($errors as $error) {
-            echo $error;
-        }
+    } else { ?>
+
+        <script>
+            $().ready(function() {
+                $('.toast').toast('show');
+            })
+        </script>
+        <?php foreach ($errors as $error) : ?>
+            <div aria-live="polite" aria-atomic="true" class="d-flex justify-content-center align-items-center">
+                <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000" style="width:500px">
+                    <div class="toast-header">
+                        <i class="fas fa-exclamation-triangle text-danger"></i>&nbsp;
+                        <strong class="mr-auto text-danger">Error</strong>
+                        <button type="button" class="ml-2 mb-1 close text-danger" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="toast-body">
+                        <?= $error ?>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach;
     }
 }
 ?>
 <div class="container">
+
+
+
+
     <div class="row m-auto">
         <div class="col-lg-12">
             <div class="card mt-3 mt-lg-5" style="max-height: 410px">
@@ -170,7 +219,7 @@ if (isset($_POST['submit'])) {
                                     <?php $rows = $guestSupport->fetchById($guest_id);
                                     if (empty($rows)) : ?>
                                         <div class="text-center">
-                                            <span class="font-italic">No records found</span>
+                                            <span class="font-italic">Your support history will be shown here.</span>
                                         </div>
                                     <?php else : ?>
                                         <table class="table table-sm table-hover">

@@ -37,6 +37,6 @@ class SupportType {
 }
 
 
-$test = new SupportType();
+// $test = new SupportType();
 
-echo $test->getTypeName(1);
+// echo $test->getTypeName(1);

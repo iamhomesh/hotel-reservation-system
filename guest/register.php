@@ -1,7 +1,13 @@
+<?php
+session_start();
+if (isset($_SESSION['guest_id'])) {
+    header('localtion: home.php');
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
-
-<?php include_once __DIR__ . '/session.php'; ?>
 
 <head>
     <meta charset="utf-8" />
@@ -26,7 +32,7 @@
             $errors = array();
             $name = $email = $mobile = $password = "";
             if (isset($_POST['submit'])) :
-                $name = $_POST['name'];
+                $name = ucwords(strtolower($_POST['name']));
                 $email = $_POST['email'];
                 $mobile = $_POST['mobile'];
                 $password = $_POST['password'];
@@ -63,7 +69,7 @@
                 <div class="card-header text-center"><strong>Register</strong>
                 </div>
                 <div class="card-body card-block">
-                    <form method="POST" action="">
+                    <form method="POST" action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>">
                         <div class="form-row">
                             <div class="col-lg-12">
                                 <div class="form-group">
@@ -100,14 +106,13 @@
                     </form>
                 </div>
                 <div class="card-footer text-center">
-                    <span>Have an account? <a class="rounded font-weight-bold badge badge-warning" href="index.php">
-                            <span class="text-dark text-uppercase">Login</span> </a> </span>
-
+                    <span>Have an account?
+                        <a class="rounded font-weight-bold badge badge-warning text-dark text-uppercase" href="index.php">
+                            <span class="text-dark text-uppercase">Login </span>
+                        </a>
+                    </span>
                 </div>
-
-
             </div>
-
         </div>
     </div>
 
@@ -116,12 +121,14 @@
         <div class="container">
             <div class="row mt-3 mt-lg-4">
                 <div class="col-sm-6">
-                    <span class="text-light">Copyright &copy; 2019 <a href="#" class="text-white font-weight-bold">Hotel
-                            Resevation System</a></span>
+                    <span class="text-light">Copyright &copy; 2019
+                        <a href="#" class="text-white font-weight-bold">Hotel Resevation System</a>
+                    </span>
                 </div>
                 <div class="col-sm-6">
-                    <span class="text-light">Designed by <a href="" class="text-white font-weight-bold">HOMESH KUMAR
-                            VERMA</a></span>
+                    <span class="text-light">Designed by
+                        <a href="" class="text-white font-weight-bold">HOMESH KUMAR VERMA</a>
+                    </span>
                 </div>
             </div>
         </div>

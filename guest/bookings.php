@@ -1,13 +1,4 @@
-<?php include_once __DIR__ . '../includes/header.php';
-include_once __DIR__ . '/../classes/BookingRequest.php';
-include_once __DIR__ . '/../classes/BookingHistory.php';
-include_once __DIR__ . '/../classes/RoomType.php';
-include_once __DIR__ . '/../classes/Room.php';
-$bookingRequest = new BookingRequest();
-$bookingHistory = new BookingHistory();
-$roomType = new RoomType();
-$room =  new Room();
-?>
+<?php include_once __DIR__ . '../includes/header.php'; ?>
 <div class="container">
     <div class="row m-auto">
         <div class="col-lg-12 overflow-auto">
@@ -37,10 +28,10 @@ $room =  new Room();
                             <div class="container overflow-auto" style="max-height:350px">
                                 <?php
                                 $requestTable = $bookingRequest->getAllByGuestId($guest_id);
-
                                 if (empty($requestTable)) : ?>
                                     <div class="text-center">
-                                        <span class="font-italic">No records found</span>
+                                        <style></style>
+                                        <span class="font-italic" id="test">Your booking requests will be shown here.</span>
                                     </div>
                                 <?php else : ?>
                                     <table class="table table-hover table-sm">
@@ -80,7 +71,7 @@ $room =  new Room();
                                 $historyTable = $bookingHistory->getAllByGuestId($guest_id);
                                 if (empty($historyTable)) : ?>
                                     <div class="text-center">
-                                        <span class="font-italic">No records found</span>
+                                        <span class="font-italic">Your booking history will be shown here.</span>
                                     </div>
                                 <?php else : ?>
                                     <table class="table table-hover table-sm">

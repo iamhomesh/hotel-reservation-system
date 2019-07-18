@@ -16,9 +16,8 @@ $address = $row['address'];
 
 
 
-
 if (isset($_POST['submit'])) {
-    $name = $_POST['name'];
+    $name = ucwords(strtolower($_POST['name']));
     $mobile = $_POST['mobile'];
     $email = $_POST['email'];
     $id_card = $_POST['id-card'];
@@ -29,14 +28,14 @@ if (isset($_POST['submit'])) {
 
 
     $fields = array(
-        'name' => $_POST['name'],
-        'mobile' => $_POST['mobile'],
-        'email' => $_POST['email'],
-        'id_card' => $_POST['id-card'],
-        'pin_code' => $_POST['pin-code'],
-        'address' => $_POST['address'],
-        'city' => $_POST['city'],
-        'state_id' => $_POST['state']
+        'name' => $name,
+        'mobile' => $mobile,
+        'email' => $email,
+        'id_card' => $id_card,
+        'pin_code' => $pin_code,
+        'address' => $address,
+        'city' => $city,
+        'state_id' => $state_id
     );
 
 

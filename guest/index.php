@@ -1,11 +1,9 @@
 <?php 
 
-// session_start();
-// if(isset($_SESSION['guest_id'])) {
-//     header('location: home.php');
-// }
-
-include_once __DIR__ . '/session.php';
+session_start();
+if(isset($_SESSION['guest_id'])) {
+    header('location: home.php');
+}
 
 ?>
 
@@ -54,9 +52,9 @@ include_once __DIR__ . '/session.php';
                         <p class="bg-dark text-danger text-center"><?= $error ?> </p>
                     <?php endforeach; ?>
                 <?php else :
-                $user = new Guest();
-                $logged = $user->login($username, $password);
-                $_SESSION['guest_id'] = $logged[0];
+                $guest = new Guest();
+                $logged = $guest->login($username, $password);
+                $_SESSION['guest_id'] = $logged;
                 echo $logged ? header("location:home.php") : "<script>alert('Username and password did not match.')</script>";
 
             endif; // $if not empty $errors
@@ -71,8 +69,7 @@ include_once __DIR__ . '/session.php';
 
                 </div>
                 <div class="card-body card-block">
-
-                    <form method="post" action="" class="needs-validation">
+                    <form method="post" action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>" class="needs-validation">
                         <div class="form-group">
                             <div class="form-row">
                                 <div id="lgn-div-username" class="input-group">

@@ -1,8 +1,5 @@
 <?php
 include_once __DIR__ . '../includes/header.php';
-
-
-
 $adults = $children = $check_in = $check_out = $room_type = "";
 if (isset($_GET['type-id'])) :
     $room_type = $_GET['type-id']; ?>
@@ -36,12 +33,10 @@ if (isset($_POST['submit'])) {
             'check_in' => $_POST['check-in'],
             'check_out' => $_POST['check-out']
         );
-        include_once __DIR__ . '/../classes/BookingRequest.php';
-        //$bookingRequest = new BookingRequest();
         $booked = $bookingRequest->create($fields);
         if ($booked) : ?>
             <script>
-                alert('Booking request sent successfuly');
+                //alert('Booking request sent successfuly');
                 location = "bookings.php";
             </script>
         <?php endif;
@@ -77,9 +72,7 @@ if (isset($_POST['submit'])) {
                                     <label for="room-type">Room Type</label>
                                     <select name="room-type" id="room-type" class="custom-select" required>
                                         <?php
-                                        include_once __DIR__ . '../../classes/RoomType.php';
-                                        $obj_room_type = new RoomType();
-                                        $rows = $obj_room_type->fetchAll(); ?>
+                                        $rows = $roomType->fetchAll(); ?>
                                         <option value="">Select Type</option>
                                         <?php foreach ($rows as $row) :
                                             if ($row['type_id'] == $room_type) : ?>

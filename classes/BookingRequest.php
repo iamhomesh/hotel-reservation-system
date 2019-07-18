@@ -79,26 +79,3 @@ class BookingRequest {
         
     }
 }
-
-$test = new BookingRequest();
-
-// // $st = $test->getAllByGuestId(0);
-
-// // echo count($st);
-// // echo "<pre>";
-// // foreach($st as $key => $value) {
-// //     print_r($value);
-// // }
-
-// $fields = array(
-//     'guest_id' => 1,
-//     'adults' => 2,
-//     'children' => 1,
-//     'room_type_id' => 3,
-//     'check_in' => "15-07-2019",
-//     'check_out' => "17-07-2019"
-// );
-
-// $test->create($fields);
-
-// echo $test->countCancelled(1);

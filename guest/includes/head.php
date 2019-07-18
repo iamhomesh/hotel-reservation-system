@@ -1,26 +1,35 @@
+
 <?php
 session_start(); 
 //if session is not set, re-direct user to index/login page
-//if(!isset($_SESSION['guest_id'])) header("location: ./");
+if(!isset($_SESSION['guest_id'])) header("location: ./");
 
+include_once __DIR__. '../../../classes/Guest.php';
+include_once __DIR__. '../../../classes/Room.php';
+include_once __DIR__. '../../../classes/RoomType.php';
+include_once __DIR__. '../../../classes/BookingRequest.php';
+include_once __DIR__. '../../../classes/BookingHistory.php';
+include_once __DIR__. '../../../classes/GuestSupport.php';
+include_once __DIR__. '../../../classes/SupportType.php';
 
+$guest = new Guest();
+$room = new Room();
+$roomType = new RoomType();
+$bookingRequest = new BookingRequest();
+$bookingHistory = new BookingHistory();
+$guestSupport = new GuestSupport();
+$supportType = new SupportType();
 
 $guest_id = $name = "";
 $id = $name = $email = $mobile = $id_card = $city = $state_id = $pin_code = $address = "";
-$name = $guest->getName($guest_id);
+//$name = $guest->getName($guest_id);
 if (isset($_SESSION['guest_id'])) {
-
-
     $guest_id = $_SESSION['guest_id']; //session id
-
     // //Fetch data from database and assign to the variables
     $name = $guest->getName($guest_id); //Fetching data
 }
 
 ?>
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
