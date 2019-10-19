@@ -1,176 +1,167 @@
 <?php
 
-include_once 'Database.php';
+require_once 'Database.php';
 
 class Guest
 {
 
     private $conn;
-    private $id_card_no;
-    private $address;
-    private $city;
-    private $state_id;
-
 
     public function __construct()
-    {
-        $this->setConnection();
-    }
-
-    public function setConnection()
     {
         $db = new Database();
         $this->conn = $db->getConnection();
     }
 
-
-
-    public function login($username, $password)
+    public function register(string $name, string $email, string $mobile, string $password): bool
     {
-        $query = "SELECT `guest_id`, `email`, `password` FROM `guest` WHERE `email` = ? AND `password` = ?";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindValue(1, $username);
-        $stmt->bindValue(2, $password);
-        $stmt->execute();
-        if ($stmt->rowCount() == 1) {
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $row['guest_id'];
-        } else {
-            return false;
-        }
-    }
-
-    public function register($name, $email, $mobile, $password)
-    {
-        $query = "INSERT INTO `guest` SET `name` = :name, `email` = :email, `mobile` = :mobile, `password` = :password";
+        $password = password_hash($password, PASSWORD_DEFAULT);
+        $query = "INSERT INTO `guests` SET `name` = :name, `email` = :email, `mobile` = :mobile, `password` = :password";
         $stmt = $this->conn->prepare($query);
         $stmt->bindvalue(':name', $name);
         $stmt->bindvalue(':email', $email);
         $stmt->bindvalue(':mobile', $mobile);
         $stmt->bindvalue(':password', $password);
-
-        if ($stmt->execute()) {
-            return true;
-        } else {
-            return false;
-        }
+        if ($stmt->execute()) return true;
+        return false;
     }
 
-
-
-    public function checkEmail($email)
+    public function checkEmail(string $email, $guestId = null): bool
     {
-        $query = "SELECT `email` FROM `guest` WHERE `email` = :email";
+        $query = "";
+        if ($guestId != null) {
+            $query = "SELECT COUNT(*) FROM guests WHERE email = :email AND id != $guestId";
+        } else {
+            $query = "SELECT COUNT(*) FROM guests WHERE email = :email";
+        }
         $stmt = $this->conn->prepare($query);
         $stmt->bindValue(":email", $email);
         $stmt->execute();
-        return $stmt->fetchColumn();
+        if ($stmt->fetchColumn() > 0) return true;
+        return false;
     }
 
-    public function checkMobile($mobile)
+    public function checkMobile(string $mobile, $guestId = null): bool
     {
-        $query = "SELECT `mobile` FROM `guest` WHERE `mobile` = :mobile";
+        $query = "";
+        if ($guestId != null) {
+            $query = "SELECT COUNT(*) FROM guests WHERE mobile = :mobile AND id != $guestId";
+        } else {
+            $query = "SELECT COUNT(*) FROM `guests` WHERE `mobile` = :mobile";
+        }
         $stmt = $this->conn->prepare($query);
         $stmt->bindValue(":mobile", $mobile);
         $stmt->execute();
-        return $stmt->fetchColumn(PDO::FETCH_ASSOC);
+        if ($stmt->fetchColumn() > 0) return true;
+        return false;
     }
 
-    public function changePassword($id, $curr, $new)
+    public function changePassword($guestId, string $curr, string $new): bool
     {
-        $query = "SELECT COUNT(`guest_id`) FROM `guest` WHERE `guest_id` = :id AND `password` = :curr";
+        $query = "SELECT * FROM guests WHERE id = :id";
         $stmt = $this->conn->prepare($query);
-
-        $stmt->bindValue(':id', $id);
-        $stmt->bindValue(':curr', $curr);
+        $stmt->bindValue(':id', $guestId);
         $stmt->execute();
-        if ($stmt->fetchColumn() == 1) {
-            $query = "UPDATE `guest` SET `password` = :new WHERE `guest_id` = :id";
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $verified = password_verify($curr, $row['password']);
+        if ($verified) {
+            $new = password_hash($new, PASSWORD_DEFAULT);
+            $query = "UPDATE guests SET password = :password WHERE id = :id";
             $stmt = $this->conn->prepare($query);
-            $stmt->bindValue(':new', $new);
-            $stmt->bindValue(':id', $id);
-
+            $stmt->bindValue(':id', $guestId);
+            $stmt->bindValue(':password', $new);
             if ($stmt->execute()) return true;
-            else return false;
-        } else return false;
+            return false;
+        }
+        return false;
     }
 
-    public function fetchData($id)
+    public function getGuest($guestId): array
     {
-        $query = "SELECT * FROM `guest` WHERE `guest_id` = ?";
+        $query = "SELECT * FROM `guests` WHERE `id` = ?";
         $stmt = $this->conn->prepare($query);
-
-        $stmt->bindValue(1, $id);
+        $stmt->bindValue(1, $guestId);
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getName($guest_id)
+    public function getName($guestId)
     {
-        $query = "SELECT `name` FROM `guest` WHERE `guest_id` = ?";
+        $query = "SELECT `name` FROM `guests` WHERE `id` = ?";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindValue(1, $guest_id);
-        $stmt->execute();
-        return $stmt->fetchColumn();
-    }
-    public function getEmail($guest_id)
-    {
-        $query = "SELECT `email` FROM `guest` WHERE `guest_id` = ?";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindValue(1, $guest_id);
+        $stmt->bindValue(1, $guestId);
         $stmt->execute();
         return $stmt->fetchColumn();
     }
 
-
-    public function update($id, $fields)
+    public function getEmail($guestId)
     {
+        $query = "SELECT `email` FROM `guests` WHERE `id` = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindValue(1, $guestId);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
 
-        $query = "UPDATE `guest` SET ";
-
+    public function update($guestId, array $fields): bool
+    {
+        $query = "UPDATE `guests` SET ";
         foreach ($fields as $key => $value) {
             $query .= "`$key` = :$key,";
         }
-
         $query = rtrim($query, ',');
-        $query .= " WHERE `guest_id` = $id";
-
+        $query .= " WHERE `id` = $guestId";
         $stmt = $this->conn->prepare($query);
-
-        if ($stmt->execute($fields)) {
-            return true;
-        } else {
-            return false;
-        }
+        if ($stmt->execute($fields)) return true;
+        return false;
     }
-    public function passwordReset(string $email)
+
+    public function resetPassword(string $email, string $password): bool
     {
-        $query = "INSERT INTO `guest_password_request`(`username`, `status`) VALUES (?,'Unread')";
+        $hashed = password_hash($password, PASSWORD_DEFAULT);
+        $query = "UPDATE guests SET password = :password WHERE email = :email";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindValue(1, $email);
-        if($stmt->execute()) return true;
-        else return false;
+        $stmt->bindValue(':email', $email);
+        $stmt->bindValue(':password', $hashed);
+        if ($stmt->execute()) return true;
+        return false;
+    }
+
+    public function getAllGuests(): array
+    {
+        $query = "SELECT * FROM `guests`";
+        $stmt = $this->conn->query($query);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function add(array $fields): bool
+    {
+        $query = "INSERT INTO `guests` SET ";
+        foreach ($fields as $key => $value) {
+            $query .= "`$key` = :$key,";
+        }
+        $password = password_hash('password', PASSWORD_DEFAULT);
+        $query .= "`password`= '$password'";
+        $stmt = $this->conn->prepare($query);
+        if ($stmt->execute($fields)) return true;
+        return false;
+    }
+
+    public function login(string $email, string $password)
+    {
+        $query = "SELECT * FROM guests WHERE email = :email";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindValue(':email', $email);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $id = $row['id'];
+        $verified = password_verify($password, $row['password']);
+        if ($verified) {
+            $stmt = $this->conn->prepare("UPDATE guests SET login_at = NOW() WHERE id = :id");
+            $stmt->bindValue(':id', $id);
+            $stmt->execute();
+            return $id;
+        }
+        return false;
     }
 }
-
-
-
-//$fields = array('name' => 'Tested', 'mobile' => '000999000', 'email' => 'test@test.com', 'password' => 'test');
-// $fields = array(
-//     'name' => 'John Smith',
-//     'mobile' => '1299999',
-//     'email' => 'john@smith.com',
-//     'id_card' => '129999',
-//     'pin-code' => '12999',
-//     'address' => 'Hollywood',
-//     'city' => 'Pune',
-//     'state_id' => '3'
-// );
-
-//  echo "<pre>";
-//  print_r($fields);
-
-//$guest = new Guest();
-//echo $guest->passwordReset("iamhomesh@gmail.com");
-//$guest->update(3, $fields);
-//echo $guest->getEmail(2);

@@ -1,29 +1,29 @@
 <?php
 
 require_once 'Database.php';
-class State {
-    private $conn;
-    private $state_id;
-    private $state_name;
 
+class State
+{
+    private $conn;
 
     public function __construct()
-    {
-        $this->setConnection();
-    }
-
-    public function setConnection()
     {
         $db = new Database();
         $this->conn = $db->getConnection();
     }
 
-    public function fetchAllState()
+    public function getAllStates()
     {
-        $query = "SELECT * FROM `state`";
+        $query = "SELECT * FROM `states`";
         return $this->conn->query($query);
     }
 
-
-
+    public function getStateName($stateId)
+    {
+        $query = "SELECT `name` FROM `states` WHERE `id` = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindValue(1, $stateId);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
 }
